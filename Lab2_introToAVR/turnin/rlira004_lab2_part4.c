@@ -24,6 +24,9 @@ unsigned char tmpA = 0x00;
 unsigned char tmpC = 0x00;
    
 while (1) {
+tmpA = 0x00;
+tmpB = 0x00;
+
 if((PINA + PINB + PINC) >= 0x8C) {
 tmpA = 0x01;
 }
