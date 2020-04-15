@@ -1,7 +1,7 @@
-/*	Author: rlira004
+/*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
- *	Lab Section:
- *	Assignment: Lab #  Exercise #
+ *	Lab Section: 025
+ *	Assignment: Lab #2  Exercise #4
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -22,12 +22,9 @@ DDRD = 0xFF; PORTD = 0x00;
 unsigned char tmpB = 0x00;
 unsigned char tmpA = 0x00;
 unsigned char tmpC = 0x00;
-unsigned char weightA = 0x00;
-unsigned char weightB = 0x00;
-unsigned char weightC = 0x00;    
+   
 while (1) {
-weightA = PINA+PINB+PINC;
-if(weightA >= 0x8C) {
+if((PINA + PINB + PINC) >= 0x8C) {
 tmpA = 0x01;
 }
 if((PINA - PINC) >= 0x50) {
