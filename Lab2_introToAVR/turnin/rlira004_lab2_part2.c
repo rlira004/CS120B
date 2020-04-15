@@ -22,8 +22,15 @@ unsigned char tmpB = 0x00;
 unsigned char tmpA = 0x00;
     
 while (1) {
-tmpA = (PINA & 0x08) + (PINA & 0x04) + (PINA & 0x02) + (PINA & 0x01) ;
-PORTC = tmpA;
+tmpA = ((PINA & 0x08)>>3) +
+((PINA & 0x04)>>2) +
+((PINA & 0x02)>>1) +
+(PINA & 0x01);  
+
+
+
+
+PORTC = 0x04 - tmpA;
 }
     return 0;
 }

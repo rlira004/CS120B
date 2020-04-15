@@ -42,19 +42,19 @@ echo Running all tests..."\n\n
 test "Open Lot"
 setPINA 0x00
 continue 5
-expectPORTC 0x00
+expectPORTC 0x04
 checkResult
 
 test "Random Lot"
-setPINA 0x07
+setPINA 0x03
 continue 5
-expectPORTC 0x07
+expectPORTC 0x02
 checkResult
 
 test "Full Lot"
-setPINA 0x08
+setPINA 0x0F
 continue 5
-expectPORTC 0x08
+expectPORTC 0x00
 checkResult
 
 
