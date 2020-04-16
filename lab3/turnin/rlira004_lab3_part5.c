@@ -17,6 +17,7 @@ int main(void) {
     DDRA = 0x00; PORTA = 0xFF; 
     DDRB = 0xFF; PORTB = 0x00;
     DDRC = 0xFF; PORTC = 0x00;
+    DDRD = 0x00; PORTD = 0xFF;
     unsigned char tmpA = 0x00;
     unsigned char tmpB = 0x00;
     /* Insert your solution below */

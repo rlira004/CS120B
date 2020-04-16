@@ -27,19 +27,19 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 test "75lbs"
-setPINA 0x4B
+setPIND 0x46
 continue 5
 expectPORTB 0x02
 checkResult
 
 test "8lbs"
-setPINA 0x08
+setPIND 0x08
 continue 5
 expectPORTB 0x04
 checkResult
 
 test "5lbs"
-setPINA 0x05
+setPIND 0x05
 continue 5
 expectPORTB 0x00
 checkResult
