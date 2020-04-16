@@ -3,5 +3,5 @@ Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"Upper PINA to Lower PORTB"..."Upper PINA to Lower PORTB"..."Lower PINA to Upper PORTC"..."Lower PINA to Upper PORTC"...======================================================
+"75lbs"..."8lbs"..."5lbs"...======================================================
 Quitting: Remote doesn't know how to detach

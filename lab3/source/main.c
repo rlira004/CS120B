@@ -21,11 +21,19 @@ int main(void) {
     unsigned char tmpB = 0x00;
     /* Insert your solution below */
     while (1) {
-	PORTB = PINA >> 4;
-	PORTC = PINA << 4;		
+	tmpA = PINA;
+	if(tmpA >= 0x46)
+		PORTB = 0x02;
+	if(tmpA > 0x05 && tmpA < 0x46)
+		PORTB = 0x04;
+	if(tmpA <= 0x05)
+		PORTB = 0x00;	
     }
 	return 0;
 }
+
+
+
 
 
 

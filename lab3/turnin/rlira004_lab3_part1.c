@@ -1,7 +1,7 @@
-/*	Author: rlira004
+/*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
- *	Lab Section:
- *	Assignment: Lab #  Exercise #
+ *	Lab Section: 025
+ *	Assignment: Lab #3  Exercise #1
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
