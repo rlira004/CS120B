@@ -12,23 +12,39 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, One, Two} state;
-
+enum States {Start, PBZ, PBO} state;
+//DDRA = 0x00; PORTA = 0xFF;
+//unsigned char tmpA = 0x00;
 void Tick() {
     switch(state) {//transitions
 	case Start:
-		PORTB = 0xF0;
+		state = PBZ;
 		break;
-
+	case PBZ:
+		if(PINA == 0x01)
+		state = PBO;
+		else
+		state = PBZ;
+		break;
+	case PBO:
+		if(PINA == 0x01)
+		state = PBZ;
+		else
+		state = PBO;
+		break;
 	default:
 		state = Start;
 		break;
     }
     switch(state) {//actions
 	case Start:
-		PORTB = 0xF0;
 		break;
-
+	case PBZ:
+		PORTB = 0x01;
+		break;
+	case PBO:
+		PORTB = 0x02;
+		break;
 	default:
 		break;
     }

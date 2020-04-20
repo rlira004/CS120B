@@ -27,15 +27,20 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 # Test sequence from waitA0: A0, !A0, A1 => PORTB: 1
-test "PINA: 0x01, 0x00, 0x02 => PORTB: 1, state: pressA1"
+test "PBZ"
+set state = Start
+setPINA 0x00
+continue 2
+expectPORTB 0x01
+expect state PBZ
+checkResult
+
+test "PBO"
 set state = Start
 setPINA 0x01
 continue 2
-setPINA 0x00
-continue 2 
-setPINA 0x02
-continue 2
-expectPORTB 0xF0
+expectPORTB 0x02
+expect state PBO
 checkResult
 
 
