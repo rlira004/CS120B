@@ -21,16 +21,16 @@ void Tick() {
 		state = PBZ;
 		break;
 	case PBZ:
-		if(PINA == 0x01)
-		state = PBO;
-		else
+		if(PINA == 0x00)
 		state = PBZ;
+		else if(PINA == 0x01)
+		state = PBO;
 		break;
 	case PBO:
-		if(PINA == 0x01)
-		state = PBZ;
-		else
+		if(PINA == 0x00)
 		state = PBO;
+		else if(PINA == 0x01)
+		state = PBZ;
 		break;
 	default:
 		state = Start;

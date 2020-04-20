@@ -43,7 +43,31 @@ expectPORTB 0x02
 expect state PBO
 checkResult
 
+test "PBO to PBZ"
+set state = Start
+setPINA 0x00
+continue 2
+setPINA 0x01
+continue 2
+setPINA 0x01
+continue 2
+expectPORTB 0x01
+expect state PBZ
+checkResult
 
+test "PBZ to PBO"
+set state = Start
+setPINA 0x01
+continue 2
+setPINA 0x01
+continue 2
+setPINA 0x01
+continue 2
+setPINA 0x01
+continue 2
+expectPORTB 0x02
+expect state PBO
+checkResult
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests

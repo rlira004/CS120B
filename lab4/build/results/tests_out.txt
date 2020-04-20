@@ -1,7 +1,7 @@
-Breakpoint 1 at 0x240: file source/main.c, line 61.
+Breakpoint 1 at 0x25c: file source/main.c, line 61.
 Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"PBZ"..."PBO"...======================================================
+"PBZ"..."PBO"..."PBO to PBZ"..."PBZ to PBO"...======================================================
 Quitting: Remote doesn't know how to detach
