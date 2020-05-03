@@ -1,7 +1,7 @@
-/*	Author: Ricardo Lira rlira004@ucr.edu
+/*	Author: Ricardo Lira
  *  Partner(s) Name: 
  *	Lab Section: 025
- *	Assignment: Lab #3  Exercise #2
+ *	Assignment: Lab #5  Exercise #2
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,33 +12,128 @@
 #include "simAVRHeader.h"
 #endif
 
+void countSystem();
+unsigned char counter;
+unsigned char prevButton;
+enum StateMachine { start, init, wait, historyCheck, calc, reset } currentState, nextState;
+
+unsigned char countOperator(unsigned char);
+
 int main(void) {
     /* Insert DDR and PORT initializations */
-    DDRA = 0x00; PORTA = 0xFF; 
+    DDRA = 0x00; PORTA = 0xFF;
     DDRC = 0xFF; PORTC = 0x00;
-    unsigned char tmpA = 0x00;
     /* Insert your solution below */
-    while (1) {
-	PORTC = 0x00;
-	tmpA = ~PINA;
-	if(tmpA == 0x01 || tmpA == 0x02) {
-		PORTC = 0x60;
-	}
-	if(tmpA > 0x02 && tmpA < 0x05) {
-                PORTC = 0x70;
-        }
-	if(tmpA > 0x04 && tmpA < 0x07) {
-                PORTC = 0x38;
-        }
-	if(tmpA > 0x06 && tmpA < 0x0A) {
-                PORTC = 0x3C;
-        }
-	if(tmpA > 0x09 && tmpA < 0x0D) {
-                PORTC = 0x3E;
-        }
-	if(tmpA > 0x0C && tmpA < 0x10) {
-                PORTC = 0x3F;
-        }	
+
+    while (1) 
+    {
+        countSystem();
     }
-	return 0;
+    return 1;
+}
+
+void countSystem()
+{
+    switch(currentState)//transition
+    {
+	case start :
+	        nextState = init;
+        	break;
+		    
+        case init :
+		nextState = wait;
+        	break;
+
+        case wait :
+		nextState = historyCheck;
+		    break;      	
+	
+	case historyCheck :
+		if(PINA == prevButton)
+		{
+		    nextState = wait;
+	            break;
+		}
+		else if ((prevButton == 0x03) && (PINA == 0x00))
+		{
+                    nextState = reset;
+		    break;
+		}
+		else
+		{
+		    nextState = calc;
+          	    break;
+		}
+
+        case calc :
+		nextState = wait;
+		break;
+
+	case reset :
+		nextState = wait;
+		break;
+	default :
+		break;
+    }
+    switch(currentState) //action
+    {
+	case start :
+                break;
+		    
+        case init :
+	        PORTB = 0x07;
+		counter = 0x07;
+		prevButton = 0x00;
+		
+                break;
+        case wait:
+                
+	        break;
+	
+	case historyCheck :
+                
+                break;
+	case reset : 
+		counter = 0x00;
+		break;
+		
+	case calc:
+		prevButton = PINA;
+		counter = countOperator(counter);
+		break;
+	default : 
+	        break;
+    }
+    PORTC = counter;
+    currentState = nextState;
+}
+
+unsigned char countOperator(unsigned char counter)
+{
+    if( PINA == 0x01 )
+    {   
+	if(counter == 9)
+	{
+            return counter;
+	}
+	else
+	{
+	    return counter + 0x01;
+	}
+    }
+    else if(PINA == 0x02)
+    {
+	if(counter == 0)
+	{
+	    return counter;
+	}
+	else
+	{
+	    return counter - 0x01;
+	}
+    }
+    else 
+    {
+        return counter;
+    }
 }
