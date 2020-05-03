@@ -1,0 +1,43 @@
+Breakpoint 1 at 0xe6: file source/main.c, line 17.
+Note: automatically using hardware breakpoints for read-only addresses.
+13	#endif
+14	
+15	int main(void) {
+16		DDRB = 0xFF; PORTB = 0x00;
+17	    while (1) {
+18		PORTB = 0x0F;
+19	    }
+20	}
+File not changed.
+Type commands for breakpoint(s) 1, one per line.
+End with a line saying just "end".
+Continuing.
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+18		PORTB = 0x0F;
+
+Breakpoint 1, main () at source/main.c:18
+Quit
+Detaching from program: /home/lab/UCRCS120B_AVRTools/CS120B/lab5/build/objects/main.elf, Remote target
+Remote doesn't know how to detach
