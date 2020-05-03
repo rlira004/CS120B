@@ -8,132 +8,141 @@
  *	code, is my own original work.
  */
 #include <avr/io.h>
-#ifdef _SIMULATE_
-#include "simAVRHeader.h"
-#endif
 
-void countSystem();
-unsigned char counter;
-unsigned char prevButton;
-enum StateMachine { start, init, wait, historyCheck, calc, reset } currentState, nextState;
+enum States {init, Start, Inc, Inc2, Dec, Dec2, Inc_rel, Dec_rel, Both, Both_rel} States;
 
-unsigned char countOperator(unsigned char);
+unsigned char tempA = 0x00;
 
-int main(void) {
-    /* Insert DDR and PORT initializations */
-    DDRA = 0x00; PORTA = 0xFF;
-    DDRC = 0xFF; PORTC = 0x00;
-    /* Insert your solution below */
-
-    while (1) 
-    {
-        countSystem();
-    }
-    return 1;
-}
-
-void countSystem()
-{
-    switch(currentState)//transition
-    {
-	case start :
-	        nextState = init;
-        	break;
-		    
-        case init :
-		nextState = wait;
-        	break;
-
-        case wait :
-		nextState = historyCheck;
-		    break;      	
-	
-	case historyCheck :
-		if(PINA == prevButton)
-		{
-		    nextState = wait;
-	            break;
-		}
-		else if ((prevButton == 0x03) && (PINA == 0x00))
-		{
-                    nextState = reset;
-		    break;
-		}
-		else
-		{
-		    nextState = calc;
-          	    break;
-		}
-
-        case calc :
-		nextState = wait;
-		break;
-
-	case reset :
-		nextState = wait;
-		break;
-	default :
-		break;
-    }
-    switch(currentState) //action
-    {
-	case start :
-                break;
-		    
-        case init :
-	        PORTB = 0x07;
-		counter = 0x07;
-		prevButton = 0x00;
-		
-                break;
-        case wait:
-                
-	        break;
-	
-	case historyCheck :
-                
-                break;
-	case reset : 
-		counter = 0x00;
+void tick(){
+	tempA = ~PINA;
+	switch (States)
+	{
+		case Start:
+		States = init;
 		break;
 		
-	case calc:
-		prevButton = PINA;
-		counter = countOperator(counter);
+		case init:
+		if ((tempA & 0x03) == 0x01)
+		{
+			States = Inc;
+			}else if ((tempA & 0x03) == 0x02){
+			States = Dec;
+			}else{
+			States = init;
+		}
 		break;
-	default : 
-	        break;
-    }
-    PORTC = counter;
-    currentState = nextState;
+		case Inc:
+		if((tempA & 0x03) == 0x01){
+			States = Inc2;
+		}
+		break;
+		case Dec:
+		if((tempA & 0x03) == 0x02){
+			States = Dec2;
+		}
+		break;
+		case Inc2:
+		if((tempA & 0x03) == 0x01){
+			States = Inc2;
+			}else if ((tempA & 0x03) == 0x00){
+			States = Inc_rel;
+			}else if((tempA & 0x03) == 0x03){
+			States = Both;
+		}
+		break;
+		case Dec2:
+		if((tempA & 0x03) == 0x02){
+			States = Dec2;
+			}else if ((tempA & 0x03) == 0x00){
+			States = Dec_rel;
+			}else if((tempA & 0x03) == 0x03){
+			States = Both;
+		}
+		break;
+		case Inc_rel:
+		if ((tempA & 0x03) == 0x00)
+		{
+			States = Inc_rel;
+			}else if ((tempA & 0x03) == 0x01){
+			States = Inc;
+			}else if ((tempA & 0x03) == 0x02){
+			States = Dec;
+		}
+		break;
+		case Dec_rel:
+		if ((tempA & 0x03) == 0x00)
+		{
+			States = Dec_rel;
+			}else if ((tempA & 0x03) == 0x02){
+			States = Dec;
+			}else if ((tempA & 0x03) == 0x01){
+			States = Inc;
+		}
+		break;
+		case Both:
+		if ((tempA & 0x03) == 0x11)
+		{
+			States = Both;
+			}else if ((tempA & 0x03) == 0x01){
+			States = Both;
+			}else if ((tempA & 0x03) == 0x10){
+			States = Both;
+			}else if ((tempA & 0x03) == 0x00){
+			States = Both_rel;
+		}
+		break;
+		case Both_rel:
+		States = init;
+		break;
+		
+		default:
+		break;
+		
+		
+	}
+	
+	switch(States) {   // State actions
+		case init:
+		PORTC = 0x00;
+		break;
+		case Inc:
+		if(PINC != 0x09){
+			PORTC = PINC + 0x01;
+		}
+		break;
+		case Dec:
+		if(PINC != 0x00){
+			PORTC = PINC - 0x01;
+		}
+		break;
+		case Inc2:
+		break;
+		case Dec2:
+		break;
+		case Inc_rel:
+		break;
+		case Dec_rel:
+		break;
+		case Both:
+		break;
+		case Both_rel:
+		PORTC = 0x00;
+		break;
+		default:
+		break;
+	} // State actions
+	
 }
 
-unsigned char countOperator(unsigned char counter)
+
+int main(void)
 {
-    if( PINA == 0x01 )
-    {   
-	if(counter == 9)
+	DDRA = 0x00; PORTA = 0xFF;
+	DDRC = 0xFF; PORTC = 0x00;
+	States = Start;
+	
+	while (1)
 	{
-            return counter;
+		tick();
 	}
-	else
-	{
-	    return counter + 0x01;
-	}
-    }
-    else if(PINA == 0x02)
-    {
-	if(counter == 0)
-	{
-	    return counter;
-	}
-	else
-	{
-	    return counter - 0x01;
-	}
-    }
-    else 
-    {
-        return counter;
-    }
 }
