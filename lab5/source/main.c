@@ -13,7 +13,9 @@ enum States { Start, Wait, Inc, Keep_Inc, Fin_Inc, Dec, Keep_Dec, Fin_Dec, Reset
 unsigned char tempA = 0x00;
 
 void tick() {
-	tempA = ~PINA;
+	tempA = 0x01 + ~PINA;
+	if(tempA > 0x02)
+		tmpA = 0x01;
 	switch (States)
 	{
 	case Start:
@@ -98,7 +100,7 @@ void tick() {
 
 	switch (States) {   // State actions
 	case Wait:
-		PORTB = 0x15;
+		PORTB = 0x00;
 		break;
 
 	case Inc:
@@ -108,7 +110,7 @@ void tick() {
 
 	case Dec:
 		if (PINB != 0x00)
-			PORTB = PINC - 0x01;
+			PORTB = 0x15;
 		break;
 
 	case Keep_Inc:
