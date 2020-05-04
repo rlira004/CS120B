@@ -1,7 +1,7 @@
 /*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
  *	Lab Section: 025
- *	Assignment: Lab #3  Exercise #2
+ *	Assignment: Lab #5  Exercise #1
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -19,8 +19,17 @@ int main(void) {
     unsigned char tmpA = 0x00;
     /* Insert your solution below */
     while (1) {
-	PORTC = 0x00;
-	tmpA = ~PINA;
+        PORTC = 0x00;
+	tmpA = PINA;
+	if(tmpA == 0xFF) {
+		PORTC = 0x40;
+	}
+	if(tmpA == 0x7C) {
+		PORTC = 0x70;
+	}
+	if(tmpA == 0xF8) {
+		PORTC = 0x3C;
+	}
 	if(tmpA == 0x01 || tmpA == 0x02) {
 		PORTC = 0x60;
 	}
@@ -40,5 +49,5 @@ int main(void) {
                 PORTC = 0x3F;
         }	
     }
-	return 0;
+	return 1;
 }

@@ -35,13 +35,19 @@ checkResult
 test "3-4"
 setPINA 0x03
 continue 5
-expectPORTC 0x60
+expectPORTC 0x70
 checkResult
 
 test "13-15"
 setPINA 0x0F
 continue 5
 expectPORTC 0x3F
+checkResult
+
+test "1"
+setPINA 0xFF
+continue 5
+expectPORTC 0x40
 checkResult
 
 # Report on how many tests passed/tests ran
