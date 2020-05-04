@@ -98,17 +98,17 @@ void tick() {
 
 	switch (States) {   // State actions
 	case Wait:
-		PORTC = 0x15;
+		PORTB = 0x15;
 		break;
 
 	case Inc:
-		if (PINC != 0x09)
-			PORTC = 0x2A;
+		if (PINB != 0x09)
+			PORTB = 0x2A;
 		break;
 
 	case Dec:
-		if (PINC != 0x00)
-			PORTC = PINC - 0x01;
+		if (PINB != 0x00)
+			PORTB = PINC - 0x01;
 		break;
 
 	case Keep_Inc:
@@ -127,7 +127,7 @@ void tick() {
 		break;
 
 	case Fin_Reset:
-		PORTC = 0x00;
+		PORTB = 0x00;
 		break;
 
 	default:
@@ -140,7 +140,7 @@ void tick() {
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 	States = Start;
 
 	while (1)
