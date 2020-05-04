@@ -9,7 +9,7 @@
  */
 #include <avr/io.h>
 
-enum States {Start, Wait, Inc, Keep_Inc, Dec, Keep_Dec, Stop_Inc, Stop_Dec, Dbl_Press, Stop_Dbl_Press} States;
+enum States {Start, Wait, Inc, Keep_Inc, Fin_Inc, Dec, Keep_Dec, Fin_Dec, Reset, Fin_Reset} States;
 unsigned char tempA = 0x00;
 
 void tick(){
@@ -34,59 +34,59 @@ void tick(){
 			States = Keep_Inc;
 		break;
 
-		case Dec:
-		if((tempA & 0x03) == 0x02)
-			States = Keep_Dec;
-		break;
-
 		case Keep_Inc:
-		if((tempA & 0x03) == 0x01)
-			States = Keep_Inc;
-		else if ((tempA & 0x03) == 0x00)
-			States = Stop_Inc;
-		else if((tempA & 0x03) == 0x03)
-			States = Dbl_Press;
-		break;
+			if ((tempA & 0x03) == 0x01)
+				States = Keep_Inc;
+			else if ((tempA & 0x03) == 0x00)
+				States = Fin_Inc;
+			else if ((tempA & 0x03) == 0x03)
+				States = Reset;
+			break;
+
+		case Fin_Inc:
+			if ((tempA & 0x03) == 0x00)
+				States = Fin_Inc;
+			else if ((tempA & 0x03) == 0x01)
+				States = Inc;
+			else if ((tempA & 0x03) == 0x02)
+				States = Dec;
+			break;
+
+		case Dec:
+			if ((tempA & 0x03) == 0x02)
+				States = Keep_Dec;
+			break;
 
 		case Keep_Dec:
 		if((tempA & 0x03) == 0x02)
 			States = Keep_Dec;
 		else if ((tempA & 0x03) == 0x00)
-			States = Stop_Dec;
+			States = Fin_Dec;
 		else if((tempA & 0x03) == 0x03)
-			States = Dbl_Press;
+			States = Reset;
 		break;
 
-		case Stop_Inc:
+		case Fin_Dec:
 		if ((tempA & 0x03) == 0x00)
-			States = Stop_Inc;
-		else if ((tempA & 0x03) == 0x01)
-			States = Inc;
-		else if ((tempA & 0x03) == 0x02)
-			States = Dec;
-		break;
-
-		case Stop_Dec:
-		if ((tempA & 0x03) == 0x00)
-			States = Stop_Dec;
+			States = Fin_Dec;
 		else if ((tempA & 0x03) == 0x02)
 			States = Dec;
 		else if ((tempA & 0x03) == 0x01)
 			States = Inc;
 		break;
 
-		case Dbl_Press:
+		case Reset:
 		if ((tempA & 0x03) == 0x11)
-			States = Dbl_Press;
+			States = Reset;
 		else if ((tempA & 0x03) == 0x01)
-			States = Dbl_Press;
+			States = Reset;
 		else if ((tempA & 0x03) == 0x10)
-			States = Dbl_Press;
+			States = Reset;
 		else if ((tempA & 0x03) == 0x00)
-			States = Stop_Dbl_Press;
+			States = Fin_Reset;
 		break;
 
-		case Stop_Dbl_Press:
+		case Fin_Reset:
 		States = Wait;
 		break;
 		
@@ -117,16 +117,16 @@ void tick(){
 		case Keep_Dec:
 		break;
 
-		case Stop_Inc:
+		case Fin_Inc:
 		break;
 
-		case Stop_Dec:
+		case Fin_Dec:
 		break;
 
-		case Dbl_Press:
+		case Reset:
 		break;
 
-		case Stop_Dbl_Press:
+		case Fin_Reset:
 		PORTC = 0x00;
 		break;
 
