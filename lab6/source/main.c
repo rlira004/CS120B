@@ -1,7 +1,7 @@
 /*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab #06  Exercise #02
+ *	Assignment: Lab #06  Exercise #03
  *	Exercise Description: [optional - include for your own benefit]
  *      youtube.com/watch?v=Sx62MaYiE3E
  *	I acknowledge all content contained herein, excluding template or example
@@ -13,100 +13,144 @@
 #include "simAVRHeader.h"
 #endif
 
-unsigned char tmpB = 0x00;
-unsigned char tmpA = 0x00;
-unsigned char cnt = 0x00;
-enum States {start, one, two, three, retwo, hold, reset } state;
+enum States {Start, Wait, Inc, Keep_Inc, Fin_Inc, Dec, Keep_Dec, Fin_Dec, Reset, Fin_Reset} States;
+unsigned char tempA = 0x00;
 
-void tick() {
-	tmpA = ~PINA;
-	switch(state) { //transitions
-		case start:
-			state = one;
+void tick(){
+	tempA = ~PINA;
+	switch (States)
+	{
+		case Start:
+		States = Wait;
+		break;
+		
+		case Wait:
+		if ((tempA & 0x03) == 0x01)
+			States = Inc;
+		else if ((tempA & 0x03) == 0x02)
+			States = Dec;
+		else
+			States = Wait;
+		break;
+
+		case Inc:
+		if((tempA & 0x03) == 0x01)
+			States = Keep_Inc;
+		break;
+
+		case Keep_Inc:
+			if ((tempA & 0x03) == 0x01)
+				States = Keep_Inc;
+			else if ((tempA & 0x03) == 0x00)
+				States = Fin_Inc;
+			else if ((tempA & 0x03) == 0x03)
+				States = Reset;
 			break;
-		case one:
-			if(tmpA == 0x00) {
-				state = two;
-			}
-			else if(tmpA != 0x00)
-			state = hold;
+
+		case Fin_Inc:
+			if ((tempA & 0x03) == 0x00)
+				States = Fin_Inc;
+			else if ((tempA & 0x03) == 0x01)
+				States = Inc;
+			else if ((tempA & 0x03) == 0x02)
+				States = Dec;
 			break;
-		case two:
-			if(tmpA == 0x00) {
-				state = three;
-			}
-			else if(tmpA != 0x00)
-			state = hold;
+
+		case Dec:
+			if ((tempA & 0x03) == 0x02)
+				States = Keep_Dec;
 			break;
-		case three:
-			if(tmpA == 0x00) {
-				state = retwo;
-			}
-			else if(tmpA != 0x00)
-			state = hold;
-			break;
-		case retwo:
-			if(tmpA == 0x00) {
-				state = one;
-			}
-			else if(tmpA != 0x00)
-			state = hold;
-			break;
-		case hold:
-			if(tmpA == 0x00)
-				state = reset;
-			else if (tmpA != 0x00)
-				state = hold;
-			break;
-		case reset:
-			if(tmpA == 0x00)
-				state = reset;
-			else if(tmpA == 0x01)
-				state = one;
-			break;		
+
+		case Keep_Dec:
+		if((tempA & 0x03) == 0x02)
+			States = Keep_Dec;
+		else if ((tempA & 0x03) == 0x00)
+			States = Fin_Dec;
+		else if((tempA & 0x03) == 0x03)
+			States = Reset;
+		break;
+
+		case Fin_Dec:
+		if ((tempA & 0x03) == 0x00)
+			States = Fin_Dec;
+		else if ((tempA & 0x03) == 0x02)
+			States = Dec;
+		else if ((tempA & 0x03) == 0x01)
+			States = Inc;
+		break;
+
+		case Reset:
+		if ((tempA & 0x03) == 0x11)
+			States = Reset;
+		else if ((tempA & 0x03) == 0x01)
+			States = Reset;
+		else if ((tempA & 0x03) == 0x10)
+			States = Reset;
+		else if ((tempA & 0x03) == 0x00)
+			States = Fin_Reset;
+		break;
+
+		case Fin_Reset:
+		States = Wait;
+		break;
+		
 		default:
-			state = start;
-			break;
+		break;
+		
+		
 	}
-	switch(state) { //state
-		case start:
-			tmpB = 0x00;
-			break;
-		case one:
-			tmpB = 0x01;
-			break;
-		case two:
-			tmpB = 0x02;
-			break;
-		case three:
-			tmpB = 0x04;
-			break;
-		case retwo:
-			tmpB = 0x02;
-			break;
-		case hold:
-			break;
-		case reset:
-			break;
+	
+	switch(States) {   // State actions
+		case Wait:
+		PORTC = 0x07;
+		break;
+
+		case Inc:
+		if(PINC != 0x09)
+			PORTC = PINC + 0x01;
+		break;
+
+		case Dec:
+		if(PINC != 0x00)
+			PORTC = PINC - 0x01;
+		break;
+
+		case Keep_Inc:
+		break;
+
+		case Keep_Dec:
+		break;
+
+		case Fin_Inc:
+		break;
+
+		case Fin_Dec:
+		break;
+
+		case Reset:
+		break;
+
+		case Fin_Reset:
+		PORTC = 0x07;
+		break;
+
 		default:
-			break;
+		break;
+	} // State actions
+	
+}
+
+
+int main(void)
+{
+	DDRA = 0x00; PORTA = 0xFF;
+	DDRC = 0xFF; PORTC = 0x00;
+	States = Start;
+	
+	while (1)
+	{
+		tick();
 	}
 }
 
 
-int main(void) {       
-        // Insert DDR and PORT initializations
-	DDRA = 0x00; PORTA = 0xFF; 
-	DDRB = 0xFF; PORTB = 0x00;
-        //Insert your solution below 
-	TimerSet (3000);
-	TimerOn();
-	state = start;
-    while (1) {
-	   tick();
-	   while(!TimerFlag);
-	   TimerFlag = 0; 
-    	   PORTB = tmpB;
-    }
-    
-}
