@@ -3,7 +3,7 @@
  *	Lab Section:
  *	Assignment: Lab #06  Exercise #03
  *	Exercise Description: [optional - include for your own benefit]
- *      youtube.com/watch?v=Sx62MaYiE3E
+ *      youtube.com/watch?v=tQLYlM9npqk
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */
