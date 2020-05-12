@@ -25,12 +25,26 @@ int main(void)
 	DDRA = 0x00; PORTA = 0xFF; 
 	DDRB = 0xFF; PORTB = 0x00; 
 	DDRD = 0xFF; PORTD = 0x00; 
-	unsigned short MAX = 8;
+	//unsigned short MAX = 8;
 	ADC_init();
 	while(1){
 		if(ADC == 0) 
 			PORTB = 0x00; 
-		else if(ADC >= (MAX)) 
-                        PORTB = ADC;
+		else if(ADC <= 15)  
+			PORTB = 0x01;
+		else if(ADC <= 30)
+                        PORTB = 0x03;
+		else if(ADC <= 45)
+                        PORTB = 0x07;
+                else if(ADC <= 60)
+                        PORTB = 0x0F;
+		else if(ADC <= 75)
+                        PORTB = 0x1F;
+                else if(ADC <= 90)
+                        PORTB = 0x3F;
+		else if(ADC <= 105)
+                        PORTB = 0x7F;
+                else 
+                        PORTB = 0xFF;
         }
 }
