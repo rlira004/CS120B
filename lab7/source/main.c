@@ -1,7 +1,7 @@
 /*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
  *	Lab Section: 025
- *	Assignment: Lab #08  Exercise #01
+ *	Assignment: Lab #07  Exercise #01
  *	Exercise Description: [optional - include for your own benefit]
  *      youtube.com/watch?v=
  *	I acknowledge all content contained herein, excluding template or example
@@ -10,24 +10,125 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "io.h"
+#include "timer.h"
 
-void ADC_init() {
-	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
-	// ADEN: setting this bit enables analog-to-digital conversion.
-	// ADSC: setting this bit starts the first conversion.
-	// ADATE: setting this bit enables auto-triggering. Since we are
-	//        in Free Running Mode, a new conversion will trigger whenever
-	//        the previous conversion completes.
+
+enum States {Start, Increment, Decrement, Reset, Wait, Hold}state;
+
+unsigned char inc;
+unsigned char dec;
+unsigned char tmpA = 0x00;
+unsigned char cnt = 0;
+
+void Tick(){
+	inc = (~PINA & 0x02);
+	dec = (~PINA & 0x04);
+
+	switch(state){
+		case Start:
+			state = Wait;
+			break;
+		case Wait:
+			if(inc && dec)
+				state = Reset;
+			else if(inc && !dec)
+				state = Increment;
+			else if (!inc && dec)
+				state = Decrement;
+			else
+				state = Wait;
+			break;
+		case Increment:
+			if(inc && !dec)
+				state = Hold;
+			else if (inc && dec)
+				state = Reset;
+			else
+				state = Wait;
+			break;
+		case Decrement:
+			if(!inc && dec)
+				state = Hold;
+			else if (inc && dec)
+				state = Reset;
+			else
+				state = Wait;
+			break;
+		case Hold:
+			if(inc && dec)
+				state = Reset;
+			else if (inc && !dec){
+				if((cnt % 9) == 0)
+					state = Increment;
+				else
+					state = Hold;
+			}
+			else if(!inc && dec){
+				if((cnt % 9) == 0)
+					state = Decrement;
+				else
+					state = Hold;
+			}
+			else
+				state = Wait;
+			break;
+		case Reset:
+			state = Wait;
+			break;
+		default:
+			state = Start;
+			break;
+	}
+	
+	switch(state){
+		case Start:
+			tmpA = 0;
+			break;
+		case Increment:
+		    cnt = 0;
+			if(tmpA < 9)
+				tmpA = tmpA + 1;
+			break;
+		case Decrement:
+			cnt = 0;
+			if(tmpA > 0)
+				tmpA = tmpA - 1;
+			break;
+		case Reset:
+			tmpA = 0x00;
+			break;
+		case Wait:
+			break;
+		case Hold:
+			cnt++;
+			break;
+		default:
+			break;
+	}
+	
 }
 
 int main(void)
 {
-	DDRA = 0x00; PORTA = 0xFF; 
-	DDRB = 0xFF; PORTB = 0x00; 
-	DDRD = 0xFF; PORTD = 0x00; 
-	ADC_init();
-	while(1){
+    	DDRA = 0x00; PORTA = 0xFF;
+	DDRC = 0xFF; PORTC = 0x00;
+	DDRD = 0xFF; PORTD = 0x00;
+	
+	TimerSet(100);
+	TimerOn();
 
-		
+	LCD_init();
+	LCD_ClearScreen();
+
+	state = Start;
+	
+	while (1)
+	{
+		Tick();
+		LCD_Cursor(1);
+		LCD_WriteData(tmpA + '0');
+		while(!TimerFlag);
+		TimerFlag = 0;
 	}
 }
