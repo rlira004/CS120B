@@ -38,7 +38,7 @@ void PWM_off(){
 	TCCR3A = 0x00;
 	TCCR3B = 0x00;
 }
-enum States{start} state;
+enum States{start, wait, C, D, E} state;
 unsigned char d7;
 unsigned char c0;
 unsigned char c1;
@@ -50,8 +50,56 @@ void Tick(){
 
 	switch(state){
 		case start:
-			if (d7)
-				set_PWM(261.63);
+			state = wait;
+			break;
+		case wait:
+			if(d7)
+				state = C;
+			else if(c0)
+				state = D;
+			else if(c1)
+				state = E;
+			else
+				state = wait;
+			break;
+		case C:
+			if(d7)
+				state = C;
+			else if ((d7 && c0) || (d7 && c1) || (!d7))
+				state = wait;
+			break;
+		case D:
+			if(c0)
+				state = D;
+			else if((c0 && d7) || (c0 && c1) || (!c0))
+				state = wait;
+			break;
+		case E:
+			if(c1)
+				state = E;
+			else if((c1 && d7) || (c1 && c0) || (!c1))
+				state = wait;
+			
+			break;
+		default:
+			state = start;
+			break;
+	}
+	switch(state){
+		case start:
+			set_PWM(0);
+			break;
+		case wait:
+			set_PWM(0);
+			break;
+		case C:
+			set_PWM(261.63);
+			break;
+		case D:
+			set_PWM(293.66);
+			break;
+		case E:
+			set_PWM(329.63);
 			break;
 		default:
 			break;
