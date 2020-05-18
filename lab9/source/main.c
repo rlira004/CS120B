@@ -53,9 +53,7 @@ void Tick(){
 			state = wait;
 			break;
 		case wait:
-			if(d7 && PINC > 0x00)
-				state = wait;
-			else if(d7)
+			if(d7)
 				state = C;
 			else if(c0)
 				state = D;
