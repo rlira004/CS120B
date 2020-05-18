@@ -11,13 +11,32 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-void ADC_init() {
-	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
-	// ADEN: setting this bit enables analog-to-digital conversion.
-	// ADSC: setting this bit starts the first conversion.
-	// ADATE: setting this bit enables auto-triggering. Since we are
-	//        in Free Running Mode, a new conversion will trigger whenever
-	//        the previous conversion completes.
+void set_PWM(double frequency){
+	static double current_frequency;
+	if(frequency != current_frequency){
+		if(!frequency)
+			TCCR3B &= 0x08;
+		else
+			TCCR3B |= 0x03;
+		
+		if(frequency < 0.954)
+			OCR3A = 0xFFFF;
+		else if(frequency > 31250)
+			OCR3A = 0x0000;
+		else
+			OCR3A = (short)(8000000 / (128 * frequency)) -1;
+		TCNT3 = 0;
+		current_frequency = frequency;
+	}
+}
+void PWM_on(){
+	TCCR3A	=  (1 << COM3A0);
+	TCCR3B = (1 << WGM32) | (1 << CS31) | (1 << CS30);
+	set_PWM(0);
+}
+void PWM_off(){
+	TCCR3A = 0x00;
+	TCCR3B = 0x00;
 }
 
 int main(void)
