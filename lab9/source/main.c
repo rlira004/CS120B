@@ -1,7 +1,7 @@
 /*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name: 
  *	Lab Section: 025
- *	Assignment: Lab #08  Exercise #04
+ *	Assignment: Lab #09  Exercise #01
  *	Exercise Description: [optional - include for your own benefit]
  *      youtube.com/watch?v=	
  *	I acknowledge all content contained herein, excluding template or example
@@ -38,32 +38,34 @@ void PWM_off(){
 	TCCR3A = 0x00;
 	TCCR3B = 0x00;
 }
+enum States{start} state;
+unsigned char d7;
+unsigned char c0;
+unsigned char c1;
 
-int main(void)
-{
-	DDRA = 0x00; PORTA = 0xFF; 
+void Tick(){
+	d7 = (~PIND & 0x80);
+	c0 = (~PINC & 0x01);
+	c1 = (~PINC & 0x02);
+
+	switch(state){
+		case start:
+			if (d7)
+				set_PWM(261.63);
+			break;
+		default:
+			break;
+	}
+}
+
+int main(void){
+	//DDRA = 0x00; PORTA = 0xFF; 
 	DDRB = 0xFF; PORTB = 0x00; 
-	DDRD = 0xFF; PORTD = 0x00; 
-	//unsigned short MAX = 8;
-	ADC_init();
+	DDRC = 0x00; PORTC = 0xFF;
+	DDRD = 0x00; PORTD = 0xFF; 
+	PWM_on();
+		state = start;
 	while(1){
-		if(ADC < 45) 
-			PORTB = 0x00; 
-		else if(ADC <= 55)  
-			PORTB = 0x01;
-		else if(ADC <= 65)
-                        PORTB = 0x02;
-		else if(ADC <= 75)
-                        PORTB = 0x04;
-                else if(ADC <= 85)
-                        PORTB = 0x08;
-		else if(ADC <= 95)
-                        PORTB = 0x10;
-                else if(ADC <= 105)
-                        PORTB = 0x20;
-		else if(ADC <= 115)
-                        PORTB = 0x40;
-                else 
-                        PORTB = 0x80;
-        }
+		Tick();
+	}
 }
