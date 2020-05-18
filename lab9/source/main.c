@@ -53,8 +53,12 @@ void Tick(){
 			state = wait;
 			break;
 		case wait:
-			if(d7)
+			if(d7){
+				if(!c1 || !c0)
 				state = C;
+				else
+				state = wait;
+			}
 			else if(c0)
 				state = D;
 			else if(c1)
@@ -75,11 +79,10 @@ void Tick(){
 				state = wait;
 			break;
 		case E:
-			if(c1)
-				state = E;
-			else if((c1 && d7) || (c1 && c0) || (!c1))
+			if((c1 && d7) || (c1 && c0) || (!c1))
 				state = wait;
-			
+			else if(c1)
+                                state = E;
 			break;
 		default:
 			state = start;
