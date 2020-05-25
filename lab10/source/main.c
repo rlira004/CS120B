@@ -98,20 +98,33 @@ void tick_Combine_State() {
 
 int main(void)
 {
-	TimerSet(1000);
+	unsigned long threeLED_StateTimer = 0;
+	unsigned long blinkingLED_StateTimer = 0;
+	const unsigned long Period = 100;
+
+	TimerSet(Period);
 	TimerOn();
 
-	threeLEDs_States = threeLED_Start;
-	blinkingLED_States = blinkingLED_Start;
+	threeLEDs_States = threeLED_SMStart;
+	blinkingLED_States = blinkingLED_SMStart;
 	combine_State = Combine_start;
 
 	while (1)
 	{
-		tick_threeLEDsSM();
-		tick_blinkingLEDSM();
+		if (threeLED_StateTimer >= 300) {
+			TickFct_threeLEDsSM();
+			threeLED_StateTimer = 0;
+		}
+		if (blinkingLED_StateTimer >= 1000) {
+			TickFct_blinkingLEDSM();
+			blinkingLED_StateTimer = 0;
+		}
 		tick_Combine_State();
 
 		while (!TimerFlag) {}
 		TimerFlag = 0;
+
+		threeLED_StateTimer += Period;
+		blinkingLED_StateTimer += Period;
 	}
 }
