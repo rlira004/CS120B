@@ -19,8 +19,8 @@ enum blinkingLEDSM { blinkingLED_Start, blinking_off, blinking_on } blinkingLED_
 enum CombineLEDsSM { Combine_start } combine_State;
 enum SpeakerStates {init, on, off, hold} Speaker_State;
 
+#define tmpA (~PINA & 0x04)
 void tick_Speaker() {
-	unsigned char tmpA = (~PINA & 0x04)
 	 switch(Speaker_State) {
 		case init:
 			Speaker_State = off;
@@ -131,8 +131,7 @@ void tick_Combine_State() {
 	}
 }
 
-int main(void)
-{
+int main(void){
 	unsigned long threeLED_StateTimer = 0;
 	unsigned long blinkingLED_StateTimer = 0;
 	unsigned long Period = 1;
@@ -142,15 +141,15 @@ int main(void)
 	TimerSet(Period);
 	TimerOn();
 
-	threeLEDs_States = threeLED_SMStart;
-	blinkingLED_States = blinkingLED_SMStart;
+	threeLEDs_States = threeLED_Start;
+	blinkingLED_States = blinkingLED_Start;
 	combine_State = Combine_start;
 	Speaker_State = init;
 	while (1)
 	{
 		if (speaker_StateTimer >= 2) {
 			tick_Speaker();
-			S_elapsedTime = 0;
+			speaker_StateTimer = 0;
 		}
 		if (threeLED_StateTimer >= 300) {
 			tick_threeLEDsSM();
