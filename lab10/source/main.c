@@ -9,7 +9,6 @@
  */
 
 #include <avr/io.h>
-#include "io.h"
 #include <avr/interrupt.h>
 
 unsigned char threeLEDs = 0x00;
