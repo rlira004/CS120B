@@ -17,7 +17,42 @@ unsigned char blinkingLED = 0x00;
 enum threeLEDsSm { threeLED_Start, light1, light2, light3 } threeLEDs_States;
 enum blinkingLEDSM { blinkingLED_Start, blinking_off, blinking_on } blinkingLED_States;
 enum CombineLEDsSM { Combine_start } combine_State;
+enum SpeakerStates {init, on, off, hold} Speaker_State;
 
+void tick_Speaker() {
+	unsigned char tmpA = (~PINA & 0x04)
+	 switch(Speaker_State) {
+		case init:
+			Speaker_State = off;
+			break;
+		case off:
+			if (tmpA == 0x04) {
+				Speaker_State = on;
+			}
+			else if (tmpA == 0x00) {
+				Speaker_State = off;
+			}
+			break;
+		case on:
+			if(tmpA == 0x00) {
+				Speaker_State = off;
+			}
+			else if (tmpA == 0x04) {
+				Speaker_State = hold;
+			}
+			break;
+		case hold:
+			if(tmpA == 0x00) {
+				Speaker_State = off;
+			}
+			else if (tmpA == 0x04) {
+				Speaker_State = on;
+			}
+			break;
+		default:
+			Speaker_State = init;
+			break;
+}
 void tick_threeLEDsSM() {
 	switch (threeLEDs_States) {
 	case threeLED_Start:
@@ -100,7 +135,9 @@ int main(void)
 {
 	unsigned long threeLED_StateTimer = 0;
 	unsigned long blinkingLED_StateTimer = 0;
-	const unsigned long Period = 100;
+	unsigned long Period = 1;
+	unsigned long speaker_StateTimer = 0;
+
 
 	TimerSet(Period);
 	TimerOn();
@@ -108,15 +145,19 @@ int main(void)
 	threeLEDs_States = threeLED_SMStart;
 	blinkingLED_States = blinkingLED_SMStart;
 	combine_State = Combine_start;
-
+	Speaker_State = init;
 	while (1)
 	{
+		if (speaker_StateTimer >= 2) {
+			tick_Speaker();
+			S_elapsedTime = 0;
+		}
 		if (threeLED_StateTimer >= 300) {
-			TickFct_threeLEDsSM();
+			tick_threeLEDsSM();
 			threeLED_StateTimer = 0;
 		}
 		if (blinkingLED_StateTimer >= 1000) {
-			TickFct_blinkingLEDSM();
+			tick_blinkingLEDSM();
 			blinkingLED_StateTimer = 0;
 		}
 		tick_Combine_State();
@@ -126,6 +167,6 @@ int main(void)
 
 		threeLED_StateTimer += Period;
 		blinkingLED_StateTimer += Period;
+		speaker_StateTimer += Period;
 	}
 }
-//test
