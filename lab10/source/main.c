@@ -9,7 +9,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "../header/timer.h"
+#include "timer.h"
 
 unsigned char threeLEDs = 0x00;
 unsigned char blinkingLED = 0x00;
