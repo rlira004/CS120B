@@ -9,42 +9,140 @@
  */
 
 #include <avr/io.h>
+#include "io.h"
 #include <avr/interrupt.h>
 
-void ADC_init() {
-	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
-	// ADEN: setting this bit enables analog-to-digital conversion.
-	// ADSC: setting this bit starts the first conversion.
-	// ADATE: setting this bit enables auto-triggering. Since we are
-	//        in Free Running Mode, a new conversion will trigger whenever
-	//        the previous conversion completes.
+unsigned char threeLEDs = 0x00;
+unsigned char blinkingLED = 0x00;
+
+enum threeLEDsSm { threeLED_SMStart, light1, light2, light3} threeLEDs_States;
+enum blinkingLEDSM{ blinkingLED_SMStart, blinking_off, blinking_on} blinkingLED_States;
+enum Combine_StateSM{Combine_start} combine_State;
+
+void TickFct_threeLEDsSM() {
+	switch(threeLEDs_States){
+		case threeLED_SMStart:
+			threeLEDs_States = light1;
+			break;
+		case light1:
+			threeLEDs_States = light2;
+			break;
+		case light2:
+			threeLEDs_States = light3;
+			break;
+		case light3:
+			threeLEDs_States = light1;
+			break;
+		default:
+			threeLEDs_States = threeLED_SMStart;
+			break;
+	}
+	switch(threeLEDs_States){
+		case threeLED_SMStart:
+			break;
+		case light1:
+			threeLEDs = 0x01;
+			break;
+		case light2:
+			threeLEDs = 0x02;
+			break;
+		case light3:
+			threeLEDs = 0x04;
+			break;
+		default:
+			break;
+	}
+}
+
+void TickFct_blinkingLEDSM(){
+	switch (blinkingLED_States)
+	{
+		case blinkingLED_SMStart:
+			blinkingLED_States = blinking_off;
+			break;
+		case blinking_off:
+			blinkingLED_States = blinking_on;
+			break;
+		case blinking_on:
+			blinkingLED_States = blinking_off;
+			break;
+		default:
+			break;
+	}
+	switch (blinkingLED_States)
+	{
+		case blinkingLED_SMStart:
+			break;
+		case blinking_off:
+			blinkingLED = 0x00;
+			break;
+		case blinking_on:
+			blinkingLED = 0x08;
+			break;
+		default:
+			break;
+	}
+}
+void TickFct_Combine_StateSM(){
+	switch(combine_State){
+		case Combine_start:
+			break;
+	}
+	switch(combine_State){
+		case Combine_start:
+			PORTB = threeLEDs | blinkingLED;
+			break;
+		default:
+			break;
+	}
+}
+
+volatile unsigned char TimerFlag = 0;
+unsigned long _avr_timer_M = 1;
+unsigned long _avr_timer_cntcurr = 0;
+
+void TimerOn(){
+	TCCR1B = 0x0B;
+	OCR1A = 125;
+	TIMSK1 = 0x02;
+	TCNT1 = 0;
+	_avr_timer_cntcurr = _avr_timer_M;
+	SREG |= 0x80;
+}
+void TimerOff(){
+	TCCR1B = 0x00;
+}
+void TimerISR(){
+	TimerFlag = 1;
+}
+ISR(TIMER1_COMPA_vect){
+	_avr_timer_cntcurr--;
+	if(_avr_timer_cntcurr == 0){
+		TimerISR();
+		_avr_timer_cntcurr = _avr_timer_M;
+	}
+}
+void TimerSet(unsigned long M){
+	_avr_timer_M = M;
+	_avr_timer_cntcurr = _avr_timer_M;
 }
 
 int main(void)
 {
-	DDRA = 0x00; PORTA = 0xFF; 
-	DDRB = 0xFF; PORTB = 0x00; 
-	DDRD = 0xFF; PORTD = 0x00; 
-	//unsigned short MAX = 8;
-	ADC_init();
-	while(1){
-		if(ADC < 45) 
-			PORTB = 0x00; 
-		else if(ADC <= 55)  
-			PORTB = 0x01;
-		else if(ADC <= 65)
-                        PORTB = 0x02;
-		else if(ADC <= 75)
-                        PORTB = 0x04;
-                else if(ADC <= 85)
-                        PORTB = 0x08;
-		else if(ADC <= 95)
-                        PORTB = 0x10;
-                else if(ADC <= 105)
-                        PORTB = 0x20;
-		else if(ADC <= 115)
-                        PORTB = 0x40;
-                else 
-                        PORTB = 0x80;
-        }
+	TimerSet(1000);
+	TimerOn();
+	
+	threeLEDs_States = threeLED_SMStart;
+	blinkingLED_States = blinkingLED_SMStart;
+	combine_State = Combine_start;
+    
+	while (1) 
+    {
+		TickFct_threeLEDsSM();
+		TickFct_blinkingLEDSM();
+		TickFct_Combine_StateSM();
+		
+		while (!TimerFlag) {}
+		TimerFlag = 0;
+    }
 }
