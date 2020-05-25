@@ -9,7 +9,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "timer.h"
+#include "../header/timer.h"
 
 unsigned char threeLEDs = 0x00;
 unsigned char blinkingLED = 0x00;
@@ -95,10 +95,6 @@ void TickFct_Combine_StateSM(){
 			break;
 	}
 }
-
-volatile unsigned char TimerFlag = 0;
-unsigned long _avr_timer_M = 1;
-unsigned long _avr_timer_cntcurr = 0;
 
 int main(void)
 {
