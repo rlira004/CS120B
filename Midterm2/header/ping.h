@@ -21,7 +21,7 @@ void Ping()
     {
         case PInit:
                cnt ++;
-                if (cnt == 1)
+                if (cnt > 0)
                     PORTB = (0x01 & PORTB);
                 else
                     PORTB = (0x00 & PORTB);
