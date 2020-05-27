@@ -1,4 +1,4 @@
-Read()
+void Read()
 {
     switch(read_state)
     {
