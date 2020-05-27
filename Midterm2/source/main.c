@@ -15,7 +15,7 @@
 
 /* SM state declarations --- fill in as needed */
 typedef enum ping_states { PInit,                                           } ping_states;
-typedef enum detect_eq_states { DEQInit,                                    } detect_eq_states;
+typedef enum detect_eq_states { DEQInit,DEQDetect,                                    } detect_eq_states;
 typedef enum detect_max_amp_states { DMAInit,                               } detect_max_amp_states;
 typedef enum detect_zc_states { DZCInit,                                    } detect_zc_states;
 typedef enum transmit_states {TInit,                                        } transmit_states;
