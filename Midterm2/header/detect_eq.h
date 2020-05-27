@@ -16,7 +16,7 @@ void Detect_EQ()
                 detect_eq_state = DEQInit;
             break;
         case DEQDetect:
-             if(detCnt > 1)
+             if(detCnt == 2)
                 detect_eq_state = DEQInit;
             else
                 detect_eq_state = DEQDetect;
@@ -31,6 +31,7 @@ void Detect_EQ()
             PORTB = (PORTB = 0x00) << 2;
             break;
         case DEQDetect:
+            detCnt++;
              PORTB = (0x02 & PORTB);
             break;
         default:
