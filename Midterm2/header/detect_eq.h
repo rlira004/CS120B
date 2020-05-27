@@ -10,7 +10,7 @@ void Detect_EQ()
     switch(detect_eq_state)
     {
         case DEQInit:
-            if(~PINA > 0x00)
+            if(PINA > 0x00)
                 detect_eq_state = DEQDetect;
             else
                 detect_eq_state = DEQInit;
