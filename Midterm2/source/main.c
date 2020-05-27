@@ -62,7 +62,6 @@ int main(void) {
     transmit_state = TInit;
 
     while (1) {
-        PORTB = 0xFF;
         Ping();
         Detect_EQ();
         Detect_Max_Amp();
