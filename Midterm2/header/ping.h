@@ -21,13 +21,13 @@ void Ping()
     switch(ping_state)
     {
         case PInit:
-               //cnt ++;
-               // if (cnt > 3) {
+               cnt ++;
+               if (cnt > 9) {
                     PORTB = (~PORTB & 0x01);
-                //    cnt = 0;
-               // }
-                //else
-                  //  PORTB = (0x00 & PORTB);
+                cnt = 0;
+               }
+                else
+                    PORTB = (0x00 & PORTB);
             break;
         default:
             break;
