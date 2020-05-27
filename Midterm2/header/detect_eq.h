@@ -4,13 +4,22 @@
 
 
 /*complete the state machine*/
-
+static int detCnt = 0;
 void Detect_EQ()
 {
     switch(detect_eq_state)
     {
         case DEQInit:
-            //init variable(s) here.
+            if(~PINA > 0x00)
+                detect_eq_state = DEQDetect;
+            else
+                detect_eq_state = DEQInit;
+            break;
+        case DEQDetect:
+             if(detCnt > 1)
+                detect_eq_state = DEQInit;
+            else
+                detect_eq_state = DEQDetect;
             break;
         default:
             detect_eq_state = DEQInit;
@@ -19,6 +28,10 @@ void Detect_EQ()
     switch(detect_eq_state)
     {
         case DEQInit:
+            PORTB = 0x00;
+            break;
+        case DEQDetect:
+             PORTB = (0x02 & PORTB);
             break;
         default:
             break;
