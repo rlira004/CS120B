@@ -5,14 +5,13 @@
 
 
 /*complete the state machine*/
-unsigned int cnt = 0;
+static int cnt = 0;
 
 void Ping()
 {
     switch(ping_state)
     {
         case PInit:
-            //ping_state = PInit;
             break;
         default:
             ping_state = PInit;
