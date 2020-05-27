@@ -22,7 +22,7 @@ void Ping()
         case PInit:
                //cnt ++;
                // if (cnt > 3) {
-                    PORTB = 0x01;
+                    PORTB = 0xFF;
                 //    cnt = 0;
                // }
                 //else
