@@ -28,7 +28,7 @@ void Detect_EQ()
     switch(detect_eq_state)
     {
         case DEQInit:
-            PORTB = 0x00;
+            PORTB = (PORTB = 0x00) << 2;
             break;
         case DEQDetect:
              PORTB = (0x02 & PORTB);
