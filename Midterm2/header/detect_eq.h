@@ -28,11 +28,11 @@ void Detect_EQ()
     switch(detect_eq_state)
     {
         case DEQInit:
-            PORTB = 0xFF;
+            PORTB = (0x00 & PORTB) << 1;
             break;
         case DEQDetect:
             detCnt++;
-             PORTB = (0x02 & PORTB);
+             PORTB = (0x02 & PORTB) << 1;
             break;
         default:
             break;
