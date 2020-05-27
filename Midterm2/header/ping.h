@@ -5,7 +5,7 @@
 
 
 /*complete the state machine*/
-static int cnt = 0;
+unsigned int cnt = 0;
 
 void Ping()
 {
