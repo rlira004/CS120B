@@ -12,6 +12,7 @@ void Ping()
     switch(ping_state)
     {
         case PInit:
+            ping_state = PInit;
             break;
         default:
             ping_state = PInit;
