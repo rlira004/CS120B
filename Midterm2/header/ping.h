@@ -6,7 +6,6 @@
 
 /*complete the state machine*/
 static int cnt = 0;
-#define tmpB (~PORTB & 0x01);
 
 void Ping()
 {
@@ -23,9 +22,9 @@ void Ping()
         case PInit:
                cnt ++;
                 if (cnt == 1)
-                    tmpB = 0x01;
+                    PORTB = (0x01 & PORTB);
                 else
-                    tmpB = 0x00;
+                    PORTB = (0x00 & PORTB);
             break;
         default:
             break;
