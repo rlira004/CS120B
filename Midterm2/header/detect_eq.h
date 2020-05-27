@@ -32,7 +32,7 @@ void Detect_EQ()
             break;
         case DEQDetect:
             detCnt++;
-             PORTB = 0xFF;
+             PORTB = (0x02 & PORTB);
             break;
         default:
             break;
