@@ -1,4 +1,4 @@
-Output()
+void Output()
 {
     switch(output_state)
     {
