@@ -6,7 +6,7 @@
 
 /*complete the state machine*/
 static int cnt = 0;
-#define tmpB = (~PORTB & 0x01);
+#define tmpB (~PORTB & 0x01);
 
 void Ping()
 {
