@@ -1,7 +1,7 @@
 /*	Author: Ricardo Lira rlira004@ucr.edu
  *  Partner(s) Name:
  *	Lab Section: 025
- *	Assignment: Lab#05  Exercise#03
+ *	Assignment: Lab#05  Exercise#02
  *	Exercise Description: [optional - include for your own benefit]
  *      youtube.com/watch?v=ZNneiCkh_bE
  *	I acknowledge all content contained herein, excluding template or example
@@ -41,8 +41,6 @@ void tick(){
 				States = Fin_Inc;
 			else if ((tempA & 0x03) == 0x03)
 				States = Reset;
-			else if (PORTB == 0x09)
-				tempA = 0x00;
 			break;
 
 		case Fin_Inc:
@@ -100,19 +98,17 @@ void tick(){
 	
 	switch(States) {   // State actions
 		case Wait:
-		PORTB = 0x00;
+		PORTC = 0x00;
 		break;
 
 		case Inc:
-		if(PINB != 0x3F)
-			PORTB = PINB + 0x01;
-		else if(PINB >= 0x3F)
-			PORTB = 0x00;	
+		if(PINC != 0x09)
+			PORTC = PINC + 0x01;
 		break;
 
 		case Dec:
-		if(PINB != 0x00)
-			PORTB = PINC - 0x01;
+		if(PINC != 0x00)
+			PORTC = PINC - 0x01;
 		break;
 
 		case Keep_Inc:
@@ -144,7 +140,7 @@ void tick(){
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
+	DDRC = 0xFF; PORTC = 0x00;
 	States = Start;
 	
 	while (1)
